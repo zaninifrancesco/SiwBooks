@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Elenco Libri</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Elenco Libri</h1>
+        <div th:if="${libri.isEmpty()}">
+            <p>Non ci sono libri da mostrare.</p>
+        </div>
+        <div th:unless="${libri.isEmpty()}" class="list-group">
+            <a th:each="libro : ${libri}" th:href="@{/libri/{id}(id=${libro.id})}" class="list-group-item list-group-item-action">
+                <h5 class="mb-1" th:text="${libro.titolo}">Titolo Libro</h5>
+                <p class="mb-1" th:text="'Anno: ' + ${libro.anno}">Anno pubblicazione</p>
+            </a>
+        </div>
+        <p class="mt-3"><a th:href="@{/}">Torna alla Home (se esistente)</a></p>
+        <p><a th:href="@{/login}">Login</a></p>
+    </div>
+</body>
+</html>

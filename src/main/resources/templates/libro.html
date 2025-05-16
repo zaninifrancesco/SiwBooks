@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${libro.titolo}"></title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 th:text="${libro.titolo}">Dettaglio Libro</h1>
+        <p><strong>Anno:</strong> <span th:text="${libro.anno}">Anno</span></p>
+        
+        <h2>Autori</h2>
+        <ul>
+            <li th:each="autore : ${libro.autori}" th:text="${autore.nome} + ' ' + ${autore.cognome}">Nome Autore</li>
+        </ul>
+
+        <h2>Recensioni</h2>
+        <div th:if="${libro.recensioni.isEmpty()}">
+            <p>Non ci sono ancora recensioni per questo libro.</p>
+        </div>
+        <div th:unless="${libro.recensioni.isEmpty()}">
+            <div th:each="recensione : ${libro.recensioni}" class="card mb-2">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${recensione.titolo}">Titolo Recensione</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Voto: <span th:text="${recensione.voto}">Voto</span></h6>
+                    <p class="card-text" th:text="${recensione.testo}">Testo recensione</p>
+                    <footer class="blockquote-footer">Recensito da: <span th:text="${recensione.utente?.username ?: 'Utente sconosciuto'}">Username</span></footer>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Link per aggiungere recensione (da mostrare solo se utente loggato e non ha già recensito) -->
+        <!-- <a th:href="@{/libri/{id}/recensioni/new(id=${libro.id})}" class="btn btn-primary mt-3">Scrivi una recensione</a> -->
+
+        <p class="mt-4"><a th:href="@{/libri}">Torna all'elenco libri</a></p>
+    </div>
+</body>
+</html>

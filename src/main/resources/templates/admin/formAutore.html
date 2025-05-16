@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuovo Autore - Admin SiwBooks</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding-top: 60px; }
+        .container { max-width: 600px; }
+        .form-label { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/}">SiwBooks</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/dashboard}">Admin Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/}">Home</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="mb-4">Aggiungi Nuovo Autore</h1>
+
+        <form th:action="@{/admin/autori}" th:object="${autore}" method="post">
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome:</label>
+                <input type="text" class="form-control" id="nome" th:field="*{nome}" required>
+                <div class="alert alert-warning" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="cognome" class="form-label">Cognome:</label>
+                <input type="text" class="form-control" id="cognome" th:field="*{cognome}" required>
+                <div class="alert alert-warning" th:if="${#fields.hasErrors('cognome')}" th:errors="*{cognome}"></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="dataNascita" class="form-label">Data di Nascita:</label>
+                <input type="date" class="form-control" id="dataNascita" th:field="*{dataNascita}">
+                <div class="alert alert-warning" th:if="${#fields.hasErrors('dataNascita')}" th:errors="*{dataNascita}"></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="dataMorte" class="form-label">Data di Morte (opzionale):</label>
+                <input type="date" class="form-control" id="dataMorte" th:field="*{dataMorte}">
+                <div class="alert alert-warning" th:if="${#fields.hasErrors('dataMorte')}" th:errors="*{dataMorte}"></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="nazionalita" class="form-label">Nazionalità:</label>
+                <input type="text" class="form-control" id="nazionalita" th:field="*{nazionalita}">
+                <div class="alert alert-warning" th:if="${#fields.hasErrors('nazionalita')}" th:errors="*{nazionalita}"></div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="foto" class="form-label">URL Foto (opzionale):</label>
+                <input type="text" class="form-control" id="foto" th:field="*{foto}">
+                <div class="alert alert-warning" th:if="${#fields.hasErrors('foto')}" th:errors="*{foto}"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Salva Autore</button>
+            <a th:href="@{/admin/dashboard}" class="btn btn-secondary">Annulla</a>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

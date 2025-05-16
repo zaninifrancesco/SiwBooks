@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SiwBooks - Home</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Benvenuto in SiwBooks!</h1>
+        <p>Esplora la nostra collezione di libri e autori.</p>
+        <div class="list-group mt-4">
+            <a th:href="@{/libri}" class="list-group-item list-group-item-action">Visualizza Elenco Libri</a>
+            <a th:href="@{/autori}" class="list-group-item list-group-item-action">Visualizza Elenco Autori</a>
+            <a th:href="@{/login}" class="list-group-item list-group-item-action">Login</a>
+            <a th:href="@{/register}" class="list-group-item list-group-item-action">Registrati</a>
+            <!-- Aggiungere link admin se l'utente è admin, quando Spring Security sarà implementato -->
+            <!-- <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dashboard}" class="list-group-item list-group-item-action">Admin Dashboard</a> -->
+        </div>
+    </div>
+</body>
+</html>

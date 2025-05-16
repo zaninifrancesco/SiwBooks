@@ -1,0 +1,77 @@
+Titolo progetto: SiwBooks
+
+Descrizione generale:
+SiwBooks è un sistema informativo sviluppato con Spring Boot che gestisce e presenta informazioni su libri, autori e recensioni. Gli utenti possono interagire con il sistema a seconda del loro ruolo: utenti occasionali, utenti registrati e amministratori. Il database utilizzato è PostgreSQL.
+
+Entità principali:
+1. Libro
+   - titolo (String)
+   - anno di pubblicazione (Integer)
+   - immagini (upload locale)
+   - autori (relazione molti-a-molti con Autore)
+   - recensioni (relazione uno-a-molti con Recensione)
+
+2. Autore
+   - nome (String)
+   - cognome (String)
+   - data di nascita (LocalDate)
+   - data di morte (LocalDate, opzionale)
+   - nazionalità (String)
+   - fotografia (upload locale)
+
+3. Recensione
+   - titolo (String)
+   - voto (Integer, 1–5)
+   - testo (String)
+   - utente (relazione molti-a-uno con Utente)
+   - libro (relazione molti-a-uno con Libro)
+
+4. Utente
+   - username (String)
+   - password (String, cifrata)
+   - ruolo (ADMIN, USER)
+
+Funzionalità per i ruoli:
+- Utente occasionale:
+  - Può visualizzare libri, autori e recensioni
+  - Non può modificare dati
+
+- Utente registrato:
+  - Può aggiungere una sola recensione per ciascun libro
+  - Può visualizzare contenuti come l’utente occasionale
+
+- Amministratore:
+  - Può aggiungere, modificare, cancellare libri e autori
+  - Può cancellare recensioni (non modificarle)
+
+Funzionalità tecniche:
+- Backend:
+  - Spring Boot
+  - Spring Data JPA (PostgreSQL)
+  - Spring Security
+  - Thymeleaf
+  - Gestione ruoli e permessi
+
+- Frontend:
+  - HTML + CSS con Bootstrap
+  - Interfaccia responsive per la visualizzazione di libri e autori
+  - Pagine CRUD per amministratori
+
+- Gestione immagini:
+  - Le immagini (libri e autori) sono caricate sul filesystem del server
+  - I percorsi dei file sono memorizzati nel database
+
+- Sicurezza:
+  - Login e registrazione con Spring Security
+  - Accesso controllato in base ai ruoli
+
+- Casi d’uso implementati:
+  - Utente occasionale: visualizzazione elenco libri e dettagli autore
+  - Utente registrato: inserimento recensione, visualizzazione recensioni
+  - Amministratore: inserimento nuovo libro, modifica autore, cancellazione recensione
+
+Requisiti aggiuntivi:
+- Il sistema deve essere ben strutturato e mantenibile
+- Il codice deve essere leggibile e commentato
+- È richiesto un database PostgreSQL
+- Tutti i dati multimediali devono essere gestiti tramite upload locale (no link esterni)
