@@ -28,7 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         if (utente.getRuolo() != null) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(utente.getRuolo().name()));
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + utente.getRuolo().name()));
         } else {
             // Se il ruolo è null, potresti voler lanciare un'eccezione o assegnare un ruolo di default
             // a seconda della logica della tua applicazione.

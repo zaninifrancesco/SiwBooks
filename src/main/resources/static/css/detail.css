@@ -1,0 +1,65 @@
+/* Stili per le pagine di dettaglio (libro e autore) */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    padding-top: 70px;
+}
+
+/* Stili per la foto dell'autore */
+.author-photo-detail {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #fff;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+    margin-bottom: 1.5rem;
+}
+
+/* Stili per la copertina del libro */
+.book-cover {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+}
+
+/* Titoli di sezione */
+.section-title {
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 300;
+}
+
+/* Colorazione differente per titoli in pagine diverse */
+.libro-page .section-title {
+    color: #007bff;
+}
+
+.autore-page .section-title {
+    color: #17a2b8;
+}
+
+/* Card per recensioni */
+.card-recensione {
+    background-color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.08);
+}
+
+/* Link e pulsanti */
+.autore-link, .libro-link {
+    color: #0056b3;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.autore-link:hover, .libro-link:hover {
+    text-decoration: underline;
+}
+
+.list-group-item-action:hover {
+    background-color: #e9ecef;
+}

@@ -1,39 +1,131 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="it">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${libro.titolo}"></title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title th:text="${libro != null ? libro.titolo : 'Dettaglio Libro'}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/detail.css}">
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 th:text="${libro.titolo}">Dettaglio Libro</h1>
-        <p><strong>Anno:</strong> <span th:text="${libro.anno}">Anno</span></p>
-        
-        <h2>Autori</h2>
-        <ul>
-            <li th:each="autore : ${libro.autori}" th:text="${autore.nome} + ' ' + ${autore.cognome}">Nome Autore</li>
-        </ul>
-
-        <h2>Recensioni</h2>
-        <div th:if="${libro.recensioni.isEmpty()}">
-            <p>Non ci sono ancora recensioni per questo libro.</p>
-        </div>
-        <div th:unless="${libro.recensioni.isEmpty()}">
-            <div th:each="recensione : ${libro.recensioni}" class="card mb-2">
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${recensione.titolo}">Titolo Recensione</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Voto: <span th:text="${recensione.voto}">Voto</span></h6>
-                    <p class="card-text" th:text="${recensione.testo}">Testo recensione</p>
-                    <footer class="blockquote-footer">Recensito da: <span th:text="${recensione.utente?.username ?: 'Utente sconosciuto'}">Username</span></footer>
-                </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/}"><i class="fas fa-book-open me-2"></i>SiwBooks</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" th:href="@{/}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/libri}">Libri</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/autori}">Autori</a></li>
+                    <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
+                        <a class="nav-link" th:href="@{/admin/dashboard}"><i class="fas fa-tachometer-alt me-1"></i>Admin Dashboard</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" th:href="@{/login}"><i class="fas fa-sign-in-alt me-1"></i>Login</a></li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-link nav-link" style="color: rgba(255,255,255,.55);"><i class="fas fa-sign-out-alt me-1"></i>Logout</button>
+                        </form>
+                    </li>
+                </ul>
             </div>
         </div>
-        
-        <!-- Link per aggiungere recensione (da mostrare solo se utente loggato e non ha già recensito) -->
-        <!-- <a th:href="@{/libri/{id}/recensioni/new(id=${libro.id})}" class="btn btn-primary mt-3">Scrivi una recensione</a> -->
+    </nav>
 
-        <p class="mt-4"><a th:href="@{/libri}">Torna all'elenco libri</a></p>
+    <div class="container mt-5 pt-3">
+        <div th:if="${libro}">
+            <div class="row">
+                <!-- Colonna Immagine -->
+                <div class="col-md-4 text-center text-md-start">
+                    <img th:src="${libro.immagini != null && !libro.immagini.isEmpty() ? libro.immagini[0] : '/images/placeholder.png'}"
+                         alt="Copertina Libro" class="book-cover img-fluid mb-3 mb-md-0">
+                </div>
+
+                <!-- Colonna Dettagli -->
+                <div class="col-md-8">
+                    <h1 class="mb-3" style="color: #333;" th:text="${libro.titolo}">Titolo del Libro</h1>
+                    <p class="lead">Pubblicato nell'anno <strong th:text="${libro.anno}">Anno</strong>.</p>
+
+                    <h4 class="section-title mt-4"><i class="fas fa-feather-alt me-2"></i>Autori</h4>
+                    <div th:if="${libro.autori != null && !libro.autori.isEmpty()}">
+                        <ul class="list-unstyled">
+                            <li th:each="autore : ${libro.autori}">
+                                <i class="fas fa-user me-2 text-muted"></i>
+                                <a th:href="@{/autori/{id}(id=${autore.id})}" class="autore-link"
+                                   th:text="${autore.nome} + ' ' + ${autore.cognome}">Nome Autore</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div th:if="${libro.autori == null || libro.autori.isEmpty()}">
+                        <p class="text-muted">Nessun autore specificato per questo libro.</p>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- Sezione Recensioni -->
+            <div class="row mt-4">
+                <div class="col">
+                    <h3 class="section-title"><i class="fas fa-comments me-2"></i>Recensioni</h3>
+                    <div th:if="${libro.recensioni == null || libro.recensioni.isEmpty()}" class="alert alert-light text-center" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>Non ci sono ancora recensioni per questo libro.
+                        <span sec:authorize="isAuthenticated()">Sii il primo a scriverne una!</span>
+                    </div>
+
+                    <div th:unless="${libro.recensioni == null || libro.recensioni.isEmpty()}">
+                        <div th:each="recensione : ${libro.recensioni}" class="card card-recensione mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title" style="color: #0056b3;" th:text="${recensione.titolo}">Titolo Recensione</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    Voto:
+                                    <span th:each="i : ${#numbers.sequence(1, 5)}">
+                                        <i th:if="${i <= recensione.voto}" class="fas fa-star" style="color: #ffc107;"></i>
+                                        <i th:if="${i > recensione.voto}" class="far fa-star" style="color: #ffc107;"></i>
+                                    </span>
+                                    <span class="ms-2" th:text="'(' + ${recensione.voto} + '/5)'"></span>
+                                </h6>
+                                <p class="card-text" th:text="${recensione.testo}">Testo recensione.</p>
+                                <footer class="blockquote-footer mt-2">
+                                    <small>Recensito da: <strong th:text="${recensione.utente?.username ?: 'Utente Sconosciuto'}">Username</strong></small>
+                                </footer>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pulsante per aggiungere recensione -->
+                    <div class="text-center mt-4" sec:authorize="isAuthenticated()">
+                         <!-- Qui andrà il link/form per aggiungere una recensione, da implementare -->
+                         <!-- Esempio: <a th:href="@{/libri/{id}/recensioni/nuova(id=${libro.id})}" class="btn btn-custom-primary"><i class="fas fa-plus-circle me-2"></i>Scrivi una recensione</a> -->
+                         <p class="text-muted">(Funzionalità "Scrivi recensione" da implementare)</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div th:unless="${libro}" class="alert alert-warning text-center" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>Libro non trovato.
+        </div>
+
+        <div class="mt-4 mb-4 text-center">
+            <a th:href="@{/}" class="btn btn-custom-secondary me-2"><i class="fas fa-home me-2"></i>Torna alla Home</a>
+            <a th:href="@{/libri}" class="btn btn-outline-secondary"><i class="fas fa-list me-2"></i>Elenco Libri Completo</a>
+        </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; <span th:text="${#dates.year(#dates.createNow())}"></span> SiwBooks. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

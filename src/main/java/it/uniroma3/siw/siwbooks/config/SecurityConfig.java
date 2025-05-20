@@ -38,11 +38,11 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.GET, "/autori", "/autori/**").permitAll()
 
                     // Utente registrato (USER): può aggiungere recensioni
-                    .requestMatchers(HttpMethod.GET, "/libri/*/recensioni/new").hasAnyAuthority(USER.name(), ADMIN.name())
-                    .requestMatchers(HttpMethod.POST, "/libri/*/recensioni").hasAnyAuthority(USER.name(), ADMIN.name())
+                    .requestMatchers(HttpMethod.GET, "/libri/*/recensioni/new").hasAnyAuthority("USER", "ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/libri/*/recensioni").hasAnyAuthority("USER", "ADMIN")
 
                     // Amministratore (ADMIN): accesso completo alle funzionalità di amministrazione
-                    .requestMatchers("/admin/**").hasAuthority(ADMIN.name()) 
+                    .requestMatchers("/admin/**").hasRole("ADMIN") 
 
                     // Qualsiasi altra richiesta necessita di autenticazione
                     .anyRequest().authenticated()
@@ -50,7 +50,7 @@ public class SecurityConfig {
             .formLogin(formLogin ->
                 formLogin
                     .loginPage("/login")
-                    .defaultSuccessUrl("/libri", true) // Reindirizza alla lista libri dopo il login
+                    .defaultSuccessUrl("/", true) // Reindirizza alla lista libri dopo il login
                     .permitAll()
             )
             .logout(logout ->

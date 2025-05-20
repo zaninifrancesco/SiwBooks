@@ -73,11 +73,11 @@ Sistema informativo per la gestione di libri, autori e recensioni con Spring Boo
 
 ## 🖼️ 5. Gestione Immagini
 
-- [ ] Upload immagini libro (multi immagine)
-- [ ] Upload foto autore (una)
-- [ ] Salvataggio immagini nel filesystem
-- [ ] Salvataggio percorso immagini nel DB
-- [ ] Visualizzazione immagini nelle pagine
+- [ ] Upload immagini libro (multi immagine) <!-- Manca logica di upload effettiva -->
+- [ ] Upload foto autore (una) <!-- Manca logica di upload effettiva -->
+- [ ] Salvataggio immagini nel filesystem <!-- Conseguenza di mancanza upload -->
+- [ ] Salvataggio percorso immagini nel DB <!-- Campi presenti ma non popolati da upload -->
+- [ ] Visualizzazione immagini nelle pagine <!-- Parzialmente tentata per autore, ma dipende da upload -->
 
 ---
 
@@ -91,13 +91,13 @@ Sistema informativo per la gestione di libri, autori e recensioni con Spring Boo
 
 ### 🧑‍💻 Utente Registrato
 
-- [x] Scrive una recensione (una sola per libro) <!-- Base functionality exists, "una sola" logic might need refinement -->
-- [ ] Visualizza recensioni proprie
-- [ ] Validazione voto (1–5)
+- [ ] Scrive una recensione (una sola per libro) <!-- Manca logica per "una sola per libro" -->
+- [ ] Visualizza recensioni proprie <!-- Manca endpoint/pagina dedicata -->
+- [ ] Validazione voto (1–5) <!-- Manca validazione su entità/service -->
 
 ### 👨‍🏫 Amministratore
 
-- [x] Aggiunge nuovo libro (con autori e immagini) <!-- Verificare se gestione immagini è completa -->
+- [ ] Aggiunge nuovo libro (con autori e immagini) <!-- Dipende da gestione immagini completa -->
 - [x] Aggiunge nuovo autore
 - [x] Modifica autore
 - [x] Cancella recensione <!-- Verifica permessi Admin in SecurityConfig/Controller -->
@@ -107,24 +107,24 @@ Sistema informativo per la gestione di libri, autori e recensioni con Spring Boo
 
 ## 🎨 7. Frontend - HTML + CSS
 
-- [ ] Layout base con Thymeleaf
-- [ ] Integrazione Bootstrap
-- [ ] Navigazione chiara (navbar)
+- [x] Layout base con Thymeleaf
+- [x] Integrazione Bootstrap
+- [x] Navigazione chiara (navbar)
 - [ ] Pagine:
   - [x] Home / Lista libri
   - [x] Dettaglio libro
   - [x] Dettaglio autore
   - [x] Login / Registrazione
-  - [ ] Scrivi recensione
-  - [x] Dashboard Admin (inserimento, modifica, cancellazione) <!-- formLibro.html e formRecensione.html mancanti o non listati -->
+  - [ ] Scrivi recensione <!-- Manca template formRecensione.html -->
+  - [x] Dashboard Admin (inserimento, modifica, cancellazione)
 
 ---
 
 ## 💾 8. Database PostgreSQL
 
-- [ ] Creazione schema (automatizzato da JPA)
+- [x] Creazione schema (automatizzato da JPA)
 - [ ] Popolamento iniziale (opzionale: `data.sql`)
-- [ ] Test con dati reali e immagini caricate
+- [ ] Test con dati reali e immagini caricate <!-- Dipende da gestione immagini -->
 
 ---
 

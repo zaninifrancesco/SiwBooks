@@ -7,7 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToMany; // Aggiunto import per @ManyToMany
 import jakarta.persistence.OneToMany;
 
 @Entity
@@ -24,7 +24,7 @@ public class Libro {
     private List<String> immagini;
 
     @ManyToMany
-    private List<Autore> autori;
+    private List<Autore> autori; // Ripristinato a List<Autore> con @ManyToMany
 
     @OneToMany(mappedBy = "libro")
     private List<Recensione> recensioni;
@@ -62,11 +62,11 @@ public class Libro {
         this.immagini = immagini;
     }
 
-    public List<Autore> getAutori() {
+    public List<Autore> getAutori() { // Getter aggiornato
         return autori;
     }
 
-    public void setAutori(List<Autore> autori) {
+    public void setAutori(List<Autore> autori) { // Setter aggiornato
         this.autori = autori;
     }
 

@@ -13,7 +13,7 @@ import jakarta.persistence.EnumType;
 public class Utente {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String username;

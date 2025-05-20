@@ -1,0 +1,87 @@
+/* Stili per l'area amministrativa */
+
+/* Layout di base */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    padding-top: 70px;
+}
+
+.container {
+    max-width: 900px;
+}
+
+/* Stili per la dashboard */
+.dashboard-header {
+    background-color: #ffffff;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+}
+
+.dashboard-header h1 {
+    color: #333;
+    font-weight: 300;
+}
+
+.card.dashboard-card {
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    height: 100%;
+}
+
+.card.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 2rem rgba(0,0,0,0.15);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #007bff;
+}
+
+/* Stili per le tabelle */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table-actions a {
+    margin-right: 5px;
+}
+
+/* Stili per i form */
+.form-label {
+    font-weight: bold;
+    color: #333;
+}
+
+.form-control,
+.form-select {
+    border-radius: 0.3rem;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Stili per l'intestazione della pagina */
+.page-header {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+    text-align: center;
+}
+
+.page-header h1 {
+    color: #333;
+    font-weight: 300;
+}

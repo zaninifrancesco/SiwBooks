@@ -1,22 +1,147 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>SiwBooks - Home</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>SiwBooks - Esplora Libri e Autori</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-    <div class="container mt-5">
-        <h1>Benvenuto in SiwBooks!</h1>
-        <p>Esplora la nostra collezione di libri e autori.</p>
-        <div class="list-group mt-4">
-            <a th:href="@{/libri}" class="list-group-item list-group-item-action">Visualizza Elenco Libri</a>
-            <a th:href="@{/autori}" class="list-group-item list-group-item-action">Visualizza Elenco Autori</a>
-            <a th:href="@{/login}" class="list-group-item list-group-item-action">Login</a>
-            <a th:href="@{/register}" class="list-group-item list-group-item-action">Registrati</a>
-            <!-- Aggiungere link admin se l'utente è admin, quando Spring Security sarà implementato -->
-            <!-- <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dashboard}" class="list-group-item list-group-item-action">Admin Dashboard</a> -->
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/}"><i class="fas fa-book-open me-2"></i>SiwBooks</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <span class="navbar-text me-3">
+                            Ciao, <span sec:authentication="principal.username" style="font-weight: bold;"></span>!
+                        </span>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')"> <!-- Già presente, verifica che sia corretto -->
+                        <a class="nav-link" th:href="@{/admin/dashboard}"><i class="fas fa-tachometer-alt me-1"></i>Admin Dashboard</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" th:href="@{/login}"><i class="fas fa-sign-in-alt me-1"></i>Login</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="btn btn-outline-light btn-sm" th:href="@{/register}"><i class="fas fa-user-plus me-1"></i>Registrati</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-link nav-link" style="color: rgba(255,255,255,.55);"><i class="fas fa-sign-out-alt me-1"></i>Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
         </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="container">
+            <h1>Benvenuto in SiwBooks</h1>
+            <p class="lead">La tua destinazione per scoprire nuovi libri e autori affascinanti.</p>
+            <div th:if="${param.loginSuccess}" class="alert alert-success mt-3" role="alert">
+                Login effettuato con successo!
+            </div>
+             <div th:if="${param.registrationSuccess}" class="alert alert-success mt-3" role="alert">
+                Registrazione completata! Effettua il login per continuare.
+            </div>
+        </div>
+    </header>
+
+    <div class="container mt-5">
+
+        <!-- Sezione Libri -->
+        <section id="libri" class="mb-5">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title"><i class="fas fa-book me-2"></i>I Nostri Libri</h2>
+                <a th:href="@{/libri}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-list me-1"></i>Vedi Tutti
+                </a>
+            </div>
+            <div th:if="${libri.isEmpty()}" class="alert alert-info text-center" role="alert">
+                Al momento non ci sono libri disponibili. Torna a trovarci presto!
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" th:if="${!libri.isEmpty()}">
+                <div class="col" th:each="libro : ${libri}">
+                    <a th:href="@{'/libri/' + ${libro.id}}" class="text-decoration-none text-dark">
+                        <div class="card h-100 libro-card">
+                            <!-- Immagine placeholder se non ci sono immagini per il libro -->
+                            <img th:src="'/images/placeholder.png'" class="card-img-top" alt="Copertina Libro">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${libro.titolo}">Titolo Libro</h5>
+                                <p class="card-text">
+                                    <small class="text-muted" th:text="'Anno: ' + ${libro.anno}">Anno Pubblicazione</small>
+                                </p>
+                                <p class="card-text">
+                                    <strong>Autori:</strong>
+                                    <span th:each="autore, iterStat : ${libro.autori}" th:text="${autore.nome} + ' ' + ${autore.cognome} + (${iterStat.last} ? '' : ', ')"></span>
+                                    <span th:if="${libro.autori == null || libro.autori.isEmpty()}">Non specificato</span>
+                                </p>
+                            </div>
+                            <div class="card-footer bg-transparent border-top-0 text-center">
+                                <span class="btn btn-sm btn-primary">Scopri di più</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div th:if="${ciSonoAltriLibri}" class="text-center mt-3">
+                <a th:href="@{/libri}" class="btn btn-outline-secondary">Vedi tutti i libri</a>
+            </div>
+        </section>
+
+        <!-- Sezione Autori -->
+        <section id="autori" class="mb-5">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title"><i class="fas fa-feather-alt me-2"></i>I Nostri Autori</h2>
+                <a th:href="@{/autori}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-list me-1"></i>Vedi Tutti
+                </a>
+            </div>
+            <div th:if="${autori.isEmpty()}" class="alert alert-info text-center" role="alert">
+                Al momento non ci sono autori disponibili.
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" th:if="${!autori.isEmpty()}">
+                <div class="col" th:each="autore : ${autori}">
+                    <div class="card h-100 autore-card text-center">
+                        <a th:href="@{'/autori/' + ${autore.id}}" class="text-decoration-none stretched-link">
+                            <img th:src="'/images/placeholder.png'" class="card-img-top rounded-circle mx-auto mt-3" alt="Foto Autore">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${autore.nome} + ' ' + ${autore.cognome}">Nome Autore</h5>
+                            <p class="card-text" th:if="${autore.dataNascita}">
+                                <small class="text-muted" th:text="'Nato/a il: ' + ${#temporals.format(autore.dataNascita, 'dd MMM yyyy')}">Data Nascita</small>
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0 text-center">
+                            <span class="btn btn-sm btn-outline-secondary">Dettagli Autore</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${ciSonoAltriAutori}" class="text-center mt-3">
+                <a th:href="@{/autori}" class="btn btn-outline-secondary">Vedi tutti gli autori</a>
+            </div>
+        </section>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; <span th:text="${#dates.year(#dates.createNow())}"></span> SiwBooks. Tutti i diritti riservati.</p>
+            <p>Un progetto di demo per il corso SIW.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

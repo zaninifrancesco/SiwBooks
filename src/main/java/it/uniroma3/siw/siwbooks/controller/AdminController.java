@@ -5,16 +5,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import it.uniroma3.siw.siwbooks.model.Libro;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import it.uniroma3.siw.siwbooks.model.Autore;
-import it.uniroma3.siw.siwbooks.service.LibroService;
+import it.uniroma3.siw.siwbooks.model.Libro;
 import it.uniroma3.siw.siwbooks.service.AutoreService;
+import it.uniroma3.siw.siwbooks.service.LibroService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
-@RequestMapping("/admin") // Aggiungiamo un prefisso per tutte le rotte admin
+@RequestMapping("/admin")
 public class AdminController {
 
     @Autowired
@@ -33,13 +38,23 @@ public class AdminController {
     @GetMapping("/libri/new")
     public String newLibroForm(Model model) {
         model.addAttribute("libro", new Libro());
-        model.addAttribute("autori", autoreService.findAll()); // Per selezionare autori esistenti
+        model.addAttribute("tuttiAutori", autoreService.findAll()); // cambiato da "autori" a "tuttiAutori" per coerenza col form
         return "admin/formLibro";
     }
 
     @PostMapping("/libri")
-    public String saveLibro(@ModelAttribute Libro libro, Model model) {
-        // Logica per salvare il libro, gestione immagini e autori
+    public String saveLibro(@ModelAttribute Libro libro, @RequestParam(name = "autoriIds", required = false) List<Long> autoriIds, Model model) { // Modificato da Long autoreId a List<Long> autoriIds
+        if (autoriIds != null && !autoriIds.isEmpty()) {
+            List<Autore> autoriSelezionati = new ArrayList<>();
+            for (Long autoreId : autoriIds) {
+                Autore autore = autoreService.findById(autoreId);
+                if (autore != null) {
+                    autoriSelezionati.add(autore);
+                }
+            }
+            libro.setAutori(autoriSelezionati); // Modificato da setAutore a setAutori
+        }
+        // Logica per salvare il libro, gestione immagini
         libroService.save(libro);
         return "redirect:/libri/" + libro.getId();
     }
@@ -49,7 +64,7 @@ public class AdminController {
         Libro libro = libroService.findById(id);
         if (libro != null) {
             model.addAttribute("libro", libro);
-            model.addAttribute("autori", autoreService.findAll());
+            model.addAttribute("tuttiAutori", autoreService.findAll()); // cambiato da "autori" a "tuttiAutori"
             return "admin/formLibro";
         }
         return "redirect:/admin/dashboard";
@@ -59,6 +74,13 @@ public class AdminController {
     public String deleteLibro(@PathVariable("id") Long id, Model model) {
         libroService.deleteById(id);
         return "redirect:/libri";
+    }
+
+    // Nuovo metodo per gestire la pagina di gestione dei libri
+    @GetMapping("/manageLibri")
+    public String manageLibri(Model model) {
+        model.addAttribute("libri", libroService.findAll());
+        return "admin/manageLibri"; // Nome del nuovo template HTML
     }
 
     // === Gestione Autori ===

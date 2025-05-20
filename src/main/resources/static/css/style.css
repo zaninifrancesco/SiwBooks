@@ -1,0 +1,232 @@
+/* Stili principali per SiwBooks - Versione 2025 */
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--body-bg);
+    padding-top: 70px;
+    color: var(--dark-color);
+    line-height: 1.7;
+}
+
+/* Navbar moderna e minimalista */
+.navbar {
+    background: var(--gradient-primary) !important;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.7rem;
+    color: var(--text-light) !important;
+    letter-spacing: -0.5px;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    transition: all var(--transition-speed) ease;
+    margin-left: 10px;
+    border-radius: 50px;
+    padding: 8px 15px !important;
+}
+
+.nav-link:hover {
+    color: white !important;
+    transform: translateY(-2px);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.hero-section {
+    background: linear-gradient(rgba(108, 92, 231, 0.7), rgba(72, 52, 212, 0.8)), url('/images/library-books.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 7rem 1rem 5rem;
+    text-align: center;
+    margin-bottom: 3.5rem;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: var(--body-bg);
+    clip-path: ellipse(50% 50% at 50% 50%);
+    z-index: 2;
+}
+
+.hero-section h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    letter-spacing: -0.5px;
+}
+
+.hero-section .lead {
+    font-size: 1.4rem;
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    font-weight: 300;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--dark-color, #2d3436);
+    position: relative;
+    padding-bottom: 0.7rem;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    border-radius: 3px;
+}
+
+.section-title i {
+    color: var(--primary-color, #6c5ce7);
+}
+
+.card {
+    border: none;
+    border-radius: var(--card-border-radius, 1rem);
+    box-shadow: var(--box-shadow, 0 10px 30px rgba(0,0,0,0.05));
+    transition: all 0.3s ease;
+    overflow: hidden;
+    background-color: white;
+}
+
+.card:hover {
+    transform: var(--hover-transform, translateY(-7px));
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.card-img-top {
+    height: 200px; /* Fixed height for images */
+    object-fit: cover; /* Ensures images cover the area well */
+}
+
+.card-title {
+    font-weight: 600;
+    color: var(--primary-color, #6c5ce7);
+    margin-bottom: 0.7rem;
+    font-size: 1.25rem;
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+.list-group-item {
+    border-color: rgba(0,0,0,0.05);
+}
+
+.footer {
+    background-color: var(--primary-color-dark, #4834d4);
+    color: white;
+    padding: 2.5rem 0;
+    text-align: center;
+    margin-top: 4rem;
+    border-radius: var(--border-radius, 0.5rem) var(--border-radius, 0.5rem) 0 0;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+}
+
+.footer p {
+    margin-bottom: 0.5rem;
+    opacity: 0.9;
+}
+
+/* Stili per i pulsanti */
+.btn-primary {
+    background-color: var(--primary-color, #6c5ce7);
+    border-color: var(--primary-color, #6c5ce7);
+    transition: all 0.3s ease;
+    border-radius: var(--button-border-radius, 50px);
+    padding: 0.4rem 1.2rem;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-color-dark, #4834d4);
+    border-color: var(--primary-color-dark, #4834d4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.btn-outline-secondary {
+    color: var(--secondary-color, #00cec9);
+    border-color: var(--secondary-color, #00cec9);
+    transition: all 0.3s ease;
+    border-radius: var(--button-border-radius, 50px);
+    padding: 0.4rem 1.2rem;
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--secondary-color, #00cec9);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.btn-custom {
+    background-color: var(--tertiary-color, #fdcb6e);
+    border-color: var(--tertiary-color, #fdcb6e);
+    color: var(--dark-color, #2d3436);
+    transition: all 0.3s ease;
+    border-radius: var(--button-border-radius, 50px);
+    padding: 0.4rem 1.2rem;
+}
+
+.btn-custom:hover {
+    background-color: #f0b940;
+    border-color: #f0b940;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.welcome-message {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+/* Stili specifici per le foto autori */
+.autore-card .card-img-top.rounded-circle {
+    width: 100px; 
+    height: 100px; 
+    object-fit: cover;
+    border: 3px solid white;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    margin-top: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.autore-card:hover .card-img-top.rounded-circle {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+/* Animazioni per elementi della pagina */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title, .card {
+    animation: fadeIn 0.8s ease forwards;
+}

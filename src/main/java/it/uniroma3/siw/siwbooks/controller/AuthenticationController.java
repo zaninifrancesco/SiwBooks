@@ -8,13 +8,54 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import it.uniroma3.siw.siwbooks.model.Utente;
 import it.uniroma3.siw.siwbooks.service.UtenteService;
-import it.uniroma3.siw.siwbooks.model.Ruolo; // Aggiungi import per Ruolo
+import it.uniroma3.siw.siwbooks.service.LibroService; // Aggiunto import
+import it.uniroma3.siw.siwbooks.service.AutoreService; // Aggiunto import
+import it.uniroma3.siw.siwbooks.model.Ruolo;
+import it.uniroma3.siw.siwbooks.model.Libro;
+import it.uniroma3.siw.siwbooks.model.Autore;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class AuthenticationController {
 
     @Autowired
     private UtenteService utenteService;
+
+    @Autowired
+    private LibroService libroService; // Aggiunta dipendenza
+
+    @Autowired
+    private AutoreService autoreService; // Aggiunta dipendenza
+
+    @GetMapping("/") // Metodo per la homepage
+    public String index(Model model) {
+        // Limita a 6 libri e 6 autori per la homepage
+        Iterable<Libro> allLibri = libroService.findAll();
+        Iterable<Autore> allAutori = autoreService.findAll();
+        
+        List<Libro> libriLimitati = new ArrayList<>();
+        int contLibri = 0;
+        for(Libro l : allLibri) {
+            if(contLibri >= 6) break;
+            libriLimitati.add(l);
+            contLibri++;
+        }
+        
+        List<Autore> autoriLimitati = new ArrayList<>();
+        int contAutori = 0;
+        for(Autore a : allAutori) {
+            if(contAutori >= 6) break;
+            autoriLimitati.add(a);
+            contAutori++;
+        }
+        
+        model.addAttribute("libri", libriLimitati);
+        model.addAttribute("autori", autoriLimitati);
+        model.addAttribute("ciSonoAltriLibri", contLibri == 6);
+        model.addAttribute("ciSonoAltriAutori", contAutori == 6);
+        return "index";
+    }
 
     @GetMapping("/login")
     public String loginForm(Model model) {

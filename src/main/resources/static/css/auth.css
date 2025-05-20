@@ -1,0 +1,51 @@
+/* Stili per pagine di autenticazione (login e registrazione) */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--admin-bg, #f0f2f5);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.navbar {
+    background-color: var(--dark-color, #343a40) !important;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+/* Container del form di autenticazione */
+.form-container {
+    background-color: #ffffff;
+    padding: 2.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+    max-width: 450px;
+    width: 100%;
+}
+
+.form-container h1 {
+    color: var(--text-color, #333);
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Stili per input con label flottante */
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    opacity: .65;
+    transform: scale(.85) translateY(-.5rem) translateX(.15rem);
+}
+
+/* Footer allineato in fondo alla pagina */
+.footer {
+    background-color: var(--dark-color, #343a40);
+    color: white;
+    padding: 1.5rem 0;
+    text-align: center;
+    margin-top: auto; /* Push footer to bottom */
+}

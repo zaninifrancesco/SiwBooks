@@ -2,6 +2,7 @@ package it.uniroma3.siw.siwbooks.model;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.ArrayList;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +14,7 @@ import jakarta.persistence.ManyToMany;
 public class Autore {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String nome;
@@ -23,7 +24,7 @@ public class Autore {
     private String nazionalita;
     private String foto; // Percorso del file dell'immagine
 
-    @ManyToMany(mappedBy = "autori")
+    @ManyToMany(mappedBy = "autori") // Ripristinato a @ManyToMany
     private List<Libro> libri;
 
     // Getters and Setters
@@ -89,5 +90,28 @@ public class Autore {
 
     public void setLibri(List<Libro> libri) {
         this.libri = libri;
+    }
+
+    // Metodi helper per gestire la relazione bidirezionale
+    public void addLibro(Libro libro) {
+        if (this.libri == null) {
+            this.libri = new ArrayList<>();
+        }
+        this.libri.add(libro);
+        if (libro.getAutori() == null) { // Assicurati che getAutori() esista e sia corretto in Libro
+            libro.setAutori(new ArrayList<>());
+        }
+        if (!libro.getAutori().contains(this)) {
+            libro.getAutori().add(this);
+        }
+    }
+
+    public void removeLibro(Libro libro) {
+        if (this.libri != null) {
+            this.libri.remove(libro);
+        }
+        if (libro.getAutori() != null) { // Assicurati che getAutori() esista e sia corretto in Libro
+            libro.getAutori().remove(this);
+        }
     }
 }
