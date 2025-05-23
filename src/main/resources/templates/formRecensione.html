@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Scrivi Recensione - SiwBooks</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/}"><i class="fas fa-book-open me-2"></i>SiwBooks</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <span class="navbar-text me-3">
+                            Ciao, <span sec:authentication="principal.username" style="font-weight: bold;"></span>!
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light btn-sm me-2" th:href="@{/}"><i class="fas fa-home me-1"></i>Home</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="btn btn-outline-light btn-sm me-2" th:href="@{/admin/dashboard}"><i class="fas fa-tachometer-alt me-1"></i>Admin Dashboard</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="btn btn-outline-light btn-sm me-2" th:href="@{/utente/recensioni}"><i class="fas fa-star me-1"></i>Le mie recensioni</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-outline-light btn-sm"><i class="fas fa-sign-out-alt me-1"></i>Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5 pt-3">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="mb-0">
+                            <i class="fas fa-pencil-alt me-2"></i>Scrivi una recensione
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex mb-4">
+                            <img th:src="'/images/placeholder.png'" class="img-thumbnail me-3" style="max-width: 120px;" alt="Copertina libro">
+                            <div>
+                                <h4 th:text="${libro.titolo}">Titolo Libro</h4>
+                                <p class="text-muted">
+                                    <span th:if="${libro.autori != null && !libro.autori.isEmpty()}" th:text="'di ' + ${libro.autori[0].nome} + ' ' + ${libro.autori[0].cognome} + (${libro.autori.size() > 1 ? ' e altri' : '')}">Autore</span>
+                                    <span th:if="${libro.autori == null || libro.autori.isEmpty()}">Autore sconosciuto</span>
+                                </p>
+                                <p class="text-muted" th:text="'Anno: ' + ${libro.anno}">Anno pubblicazione</p>
+                            </div>
+                        </div>
+
+                        <form th:action="@{'/libri/' + ${libro.id} + '/recensioni'}" th:object="${recensione}" method="post">
+                            <!-- Titolo Recensione -->
+                            <div class="mb-3">
+                                <label for="titolo" class="form-label">Titolo della recensione</label>
+                                <input type="text" class="form-control" id="titolo" th:field="*{titolo}" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('titolo')}" th:errors="*{titolo}"></div>
+                            </div>
+
+                            <!-- Voto -->
+                            <div class="mb-3">
+                                <label class="form-label">Voto</label>
+                                <div class="rating-stars mb-2">
+                                    <div class="btn-group" role="group">
+                                        <input type="radio" class="btn-check" th:field="*{voto}" name="voto" id="voto1" value="1" required>
+                                        <label class="btn btn-outline-warning" for="voto1"><i class="fas fa-star"></i> 1</label>
+                                        
+                                        <input type="radio" class="btn-check" th:field="*{voto}" name="voto" id="voto2" value="2">
+                                        <label class="btn btn-outline-warning" for="voto2"><i class="fas fa-star"></i> 2</label>
+                                        
+                                        <input type="radio" class="btn-check" th:field="*{voto}" name="voto" id="voto3" value="3">
+                                        <label class="btn btn-outline-warning" for="voto3"><i class="fas fa-star"></i> 3</label>
+                                        
+                                        <input type="radio" class="btn-check" th:field="*{voto}" name="voto" id="voto4" value="4">
+                                        <label class="btn btn-outline-warning" for="voto4"><i class="fas fa-star"></i> 4</label>
+                                        
+                                        <input type="radio" class="btn-check" th:field="*{voto}" name="voto" id="voto5" value="5">
+                                        <label class="btn btn-outline-warning" for="voto5"><i class="fas fa-star"></i> 5</label>
+                                    </div>
+                                </div>
+                                <div class="text-danger" th:if="${#fields.hasErrors('voto')}" th:errors="*{voto}"></div>
+                            </div>
+
+                            <!-- Testo Recensione -->
+                            <div class="mb-3">
+                                <label for="testo" class="form-label">La tua recensione</label>
+                                <textarea class="form-control" id="testo" th:field="*{testo}" rows="5"></textarea>
+                                <div class="text-danger" th:if="${#fields.hasErrors('testo')}" th:errors="*{testo}"></div>
+                                <div class="form-text">Max 1000 caratteri. Racconta cosa ti è piaciuto o non ti è piaciuto del libro.</div>
+                            </div>
+
+                            <!-- Bottoni Submit e Annulla -->
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{'/libri/' + ${libro.id}}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-1"></i>Annulla
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-1"></i>Pubblica recensione
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-5">
+        <div class="container">
+            <p>&copy; <span th:text="${#dates.year(#dates.createNow())}"></span> SiwBooks. Tutti i diritti riservati.</p>
+            <p>Un progetto di demo per il corso SIW.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

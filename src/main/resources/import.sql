@@ -82,3 +82,20 @@ INSERT INTO libro_autori (libri_id, autori_id) VALUES (13, 13); -- Le avventure 
 
 -- Popolamento tabella Recensione
 -- Recensioni per "Il Signore degli Anelli" (id 1)
+INSERT INTO recensione (id, titolo, testo, voto, data_creazione, libro_id, utente_id) VALUES (1, 'Capolavoro Assoluto', 'Un viaggio incredibile in un mondo fantastico. Personaggi indimenticabili e una storia che ti cattura dall inizio alla fine. Consigliatissimo!', 5, '2025-05-21 10:00:00', 1, 2);
+INSERT INTO recensione (id, titolo, testo, voto, data_creazione, libro_id, utente_id) VALUES (2, 'Un po lungo ma Meraviglioso', 'Ho faticato un po con la lunghezza e le descrizioni dettagliate, ma alla fine la storia mi ha conquistata. Un classico.', 4, '2025-05-21 10:10:00', 1, 4);
+
+-- Recensioni per "1984" (id 2)
+INSERT INTO recensione (id, titolo, testo, voto, data_creazione, libro_id, utente_id) VALUES (3, 'Profetico e Inquietante', 'Un libro che fa riflettere profondamente sulla società e sul controllo. Attualissimo nonostante gli anni. Una lettura obbligatoria.', 5, '2025-05-21 10:05:00', 2, 3);
+
+-- Recensioni per "Io, Robot" (id 3)
+INSERT INTO recensione (id, titolo, testo, voto, data_creazione, libro_id, utente_id) VALUES (4, 'Visionario!', 'Asimov esplora il rapporto uomo-macchina in modo geniale. Racconti che aprono la mente sul futuro e l intelligenza artificiale.', 4, '2025-05-21 10:15:00', 3, 2);
+
+-- Recensioni per "IT" (id 6)
+INSERT INTO recensione (id, titolo, testo, voto, data_creazione, libro_id, utente_id) VALUES (5, 'Spaventoso e Avvincente', 'King al suo meglio. Una storia di amicizia e orrore che ti tiene incollato alle pagine. Pennywise è terrificante.', 1, '2025-05-21 10:20:00', 6, 1);
+
+-- Recensioni per "Orgoglio e Pregiudizio" (id 4)
+INSERT INTO recensione (id, titolo, testo, voto, data_creazione, libro_id, utente_id) VALUES (6, 'Un Classico Intramontabile', 'Una storia d amore e di crescita personale che affascina ancora oggi. Personaggi ben caratterizzati e dialoghi brillanti.', 5, '2025-05-21 11:00:00', 4, 3);
+
+-- Recensioni per "Cent'anni di solitudine" (id 5)
+INSERT INTO recensione (id, titolo, testo, voto, data_creazione, libro_id, utente_id) VALUES (7, 'Realismo Magico Puro', 'Un epopea familiare che attraversa generazioni, intrisa di magia e storia. Complesso ma appagante.', 4, '2025-05-21 11:30:00', 5, 4);

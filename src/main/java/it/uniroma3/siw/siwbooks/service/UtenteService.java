@@ -1,6 +1,8 @@
 package it.uniroma3.siw.siwbooks.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder; // Importa PasswordEncoder
 import org.springframework.stereotype.Service;
 import it.uniroma3.siw.siwbooks.model.Utente;
@@ -32,5 +34,18 @@ public class UtenteService {
     // Metodo per trovare l'utente per username, utile per la logica di registrazione e login
     public Utente findByUsername(String username) {
         return utenteRepository.findByUsername(username);
+    }
+    
+    /**
+     * Ottiene l'utente correntemente autenticato.
+     * @return l'utente corrente, o null se non c'è nessun utente autenticato
+     */
+    public Utente getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+        String username = authentication.getName();
+        return findByUsername(username);
     }
 }

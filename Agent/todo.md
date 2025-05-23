@@ -9,7 +9,7 @@ Sistema informativo per la gestione di libri, autori e recensioni con Spring Boo
 - [ ] Definire requisiti funzionali e non funzionali
 - [ ] Creare diagramma dei casi d'uso (almeno 6)
 - [ ] Creare diagramma UML delle classi e relazioni
-- [ ] Progettare struttura tabelle e relazioni per PostgreSQL
+- [x] Progettare struttura tabelle e relazioni per PostgreSQL
 
 ---
 
@@ -91,16 +91,16 @@ Sistema informativo per la gestione di libri, autori e recensioni con Spring Boo
 
 ### 🧑‍💻 Utente Registrato
 
-- [ ] Scrive una recensione (una sola per libro) <!-- Manca logica per "una sola per libro" -->
-- [ ] Visualizza recensioni proprie <!-- Manca endpoint/pagina dedicata -->
-- [ ] Validazione voto (1–5) <!-- Manca validazione su entità/service -->
+- [x] Scrive una recensione (una sola per libro)
+- [x] Visualizza recensioni proprie
+- [x] Validazione voto (1–5)
 
 ### 👨‍🏫 Amministratore
 
-- [ ] Aggiunge nuovo libro (con autori e immagini) <!-- Dipende da gestione immagini completa -->
+- [x] Aggiunge nuovo libro (con autori e immagini) <!-- Funzionalità base implementata ma senza gestione immagini completa -->
 - [x] Aggiunge nuovo autore
 - [x] Modifica autore
-- [x] Cancella recensione <!-- Verifica permessi Admin in SecurityConfig/Controller -->
+- [x] Cancella recensione
 - [x] Elimina libro/autore
 
 ---
@@ -115,7 +115,7 @@ Sistema informativo per la gestione di libri, autori e recensioni con Spring Boo
   - [x] Dettaglio libro
   - [x] Dettaglio autore
   - [x] Login / Registrazione
-  - [ ] Scrivi recensione <!-- Manca template formRecensione.html -->
+  - [x] Scrivi recensione <!-- Integrato in dettaglio libro -->
   - [x] Dashboard Admin (inserimento, modifica, cancellazione)
 
 ---
@@ -123,7 +123,7 @@ Sistema informativo per la gestione di libri, autori e recensioni con Spring Boo
 ## 💾 8. Database PostgreSQL
 
 - [x] Creazione schema (automatizzato da JPA)
-- [ ] Popolamento iniziale (opzionale: `data.sql`)
+- [x] Popolamento iniziale (opzionale: `data.sql`)
 - [ ] Test con dati reali e immagini caricate <!-- Dipende da gestione immagini -->
 
 ---
@@ -133,6 +133,57 @@ Sistema informativo per la gestione di libri, autori e recensioni con Spring Boo
 - [ ] Test unitari per service
 - [ ] Test di integrazione
 - [ ] Validazione input utente (lato server e lato client)
+
+---
+
+## 🎯 11. Sistema Recensioni - Implementazione Dettagliata
+
+### 📊 Database e Repository
+
+- [x] Aggiungere campo `dataCreazione` a `Recensione` per tracciare quando è stata scritta
+- [x] Aggiungere metodo `findByUtenteAndLibro(Utente utente, Libro libro)` a `RecensioneRepository`
+- [x] Aggiungere metodo `findByUtente(Utente utente)` a `RecensioneRepository` per le recensioni dell'utente
+- [x] Aggiungere metodo `findByLibroOrderByDataCreazioneDesc(Libro libro)` per ordinare recensioni
+
+### 🔧 Service
+
+- [x] Aggiungere metodo `existsRecensioneByUtenteAndLibro(Utente utente, Libro libro)` al `RecensioneService`
+- [x] Implementare validazione del voto (1-5) con `@Min(1)` e `@Max(5)` su campo `voto`
+- [x] Aggiungere logica per impostare automaticamente `dataCreazione` quando si salva una recensione
+- [x] Implementare metodo `getRecensioniUtente(Utente utente)` per dashboard utente
+
+### 🎮 Controller
+
+- [x] Completare metodo `newRecensioneForm` per verificare che l'utente non abbia già recensito il libro <!-- Ora integrato in libro.html -->
+- [x] Reindirizzare con messaggio di errore se l'utente ha già recensito il libro <!-- Gestito in libro.html e LibroController -->
+- [x] Ampliare metodo `saveRecensione` per:
+  - [x] Associare l'utente corrente (recuperandolo da `SecurityContextHolder`)
+  - [x] Associare il libro corretto
+  - [x] Validare il voto (1-5)
+  - [x] Impostare `dataCreazione`
+- [x] Creare endpoint `GET /utente/recensioni` per la dashboard utente
+- [x] Aggiungere messaggio di conferma dopo il salvataggio di una recensione
+
+### 🎨 Frontend
+
+- [x] Creare template `formRecensione.html` con: <!-- Ora integrato in libro.html -->
+  - [x] Campo titolo recensione
+  - [x] Campo voto (1-5) con validazione client-side
+  - [x] Area di testo per il contenuto
+  - [x] Submit button
+  - [x] Messaggi di validazione
+- [x] Aggiungere in `libro.html` un bottone "Scrivi recensione" per utenti autenticati <!-- Ora è un form inline -->
+- [x] Nascondere il bottone "Scrivi recensione" se l'utente ha già recensito il libro <!-- Form inline nascosto -->
+- [x] Creare template `recensioniUtente.html` per visualizzare le recensioni proprie
+- [x] Aggiungere componente di visualizzazione stelle per i voti (1-5)
+- [x] Aggiungere link alla dashboard recensioni nella navbar per utenti autenticati
+
+### 🔐 Sicurezza
+
+- [x] Verificare che `/libri/{id}/recensioni/new` sia accessibile solo agli utenti autenticati <!-- Ora reindirizza -->
+- [x] Verificare che `/libri/{id}/recensioni` per il POST sia accessibile agli utenti autenticati
+- [x] Assicurarsi che `/recensioni/{id}/delete` sia accessibile solo agli admin
+- [x] Proteggere l'endpoint `/utente/recensioni` per utenti autenticati
 
 ---
 

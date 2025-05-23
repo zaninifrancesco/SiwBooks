@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Le mie recensioni - SiwBooks</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/}"><i class="fas fa-book-open me-2"></i>SiwBooks</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" th:href="@{/}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/libri}">Libri</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/autori}">Autori</a></li>
+                    <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
+                        <a class="nav-link" th:href="@{/admin/dashboard}"><i class="fas fa-tachometer-alt me-1"></i>Admin Dashboard</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link active" th:href="@{/utente/recensioni}"><i class="fas fa-star me-1"></i>Le mie recensioni</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" th:href="@{/login}"><i class="fas fa-sign-in-alt me-1"></i>Login</a></li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-link nav-link" style="color: rgba(255,255,255,.55);"><i class="fas fa-sign-out-alt me-1"></i>Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5 pt-3">
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="text-primary">
+                    <i class="fas fa-star me-2"></i>Le mie recensioni
+                </h1>
+                <p class="lead text-muted">Ecco tutte le recensioni che hai lasciato su SiwBooks.</p>
+            </div>
+        </div>
+
+        <!-- Alert per messaggi di successo -->
+        <div th:if="${successoOperazione}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i><span th:text="${successoOperazione}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Sezione Recensioni -->
+        <div class="row mt-4">
+            <div class="col">
+                <div th:if="${recensioni == null || recensioni.isEmpty()}" class="alert alert-light text-center" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>Non hai ancora scritto recensioni.
+                    <a th:href="@{/libri}" class="alert-link">Sfoglia la libreria</a> per trovare un libro da recensire.
+                </div>
+
+                <div th:unless="${recensioni == null || recensioni.isEmpty()}">
+                    <div class="row row-cols-1 row-cols-md-2 g-4">
+                        <div th:each="recensione : ${recensioni}" class="col">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge bg-primary me-2">
+                                            <i class="fas fa-calendar-alt me-1"></i>
+                                            <span th:text="${#temporals.format(recensione.dataCreazione, 'dd/MM/yyyy')}">01/01/2023</span>
+                                        </span>
+                                        <span th:each="i : ${#numbers.sequence(1, 5)}">
+                                            <i th:if="${i <= recensione.voto}" class="fas fa-star" style="color: #ffc107;"></i>
+                                            <i th:if="${i > recensione.voto}" class="far fa-star" style="color: #ffc107;"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title" th:text="${recensione.titolo}">Titolo recensione</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted" th:text="'Libro: ' + ${recensione.libro.titolo}">Titolo libro</h6>
+                                    <p class="card-text" th:text="${recensione.testo}">Testo recensione.</p>
+                                </div>
+                                <div class="card-footer bg-transparent border-top-0">
+                                    <a th:href="@{/libri/{id}(id=${recensione.libro.id})}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-book me-1"></i>Vai al libro
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 mb-4 text-center">
+            <a th:href="@{/}" class="btn btn-custom-secondary me-2"><i class="fas fa-home me-2"></i>Torna alla Home</a>
+            <a th:href="@{/libri}" class="btn btn-outline-secondary"><i class="fas fa-list me-2"></i>Sfoglia libri</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; <span th:text="${#dates.year(#dates.createNow())}"></span> SiwBooks. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

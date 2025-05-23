@@ -38,11 +38,12 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.GET, "/autori", "/autori/**").permitAll()
 
                     // Utente registrato (USER): può aggiungere recensioni
-                    .requestMatchers(HttpMethod.GET, "/libri/*/recensioni/new").hasAnyAuthority("USER", "ADMIN")
-                    .requestMatchers(HttpMethod.POST, "/libri/*/recensioni").hasAnyAuthority("USER", "ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/libri/*/recensioni/new").hasAnyRole("USER", "ADMIN") // Changed to hasAnyRole
+                    .requestMatchers(HttpMethod.POST, "/libri/*/recensioni").hasAnyRole("USER", "ADMIN") // Changed to hasAnyRole
 
                     // Amministratore (ADMIN): accesso completo alle funzionalità di amministrazione
                     .requestMatchers("/admin/**").hasRole("ADMIN") 
+                    .requestMatchers(HttpMethod.GET, "/recensioni/{id}/delete").hasRole("ADMIN") // Added rule for deleting reviews
 
                     // Qualsiasi altra richiesta necessita di autenticazione
                     .anyRequest().authenticated()

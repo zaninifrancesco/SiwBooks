@@ -73,18 +73,35 @@
             <!-- Sezione Recensioni -->
             <div class="row mt-4">
                 <div class="col">
+                    <!-- Alert per messaggi di successo o errore -->
+                    <div th:if="${successoRecensione}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i><span th:text="${successoRecensione}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <div th:if="${erroreRecensione}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i><span th:text="${erroreRecensione}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <div th:if="${successoOperazione}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i><span th:text="${successoOperazione}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
                     <h3 class="section-title"><i class="fas fa-comments me-2"></i>Recensioni</h3>
-                    <div th:if="${libro.recensioni == null || libro.recensioni.isEmpty()}" class="alert alert-light text-center" role="alert">
+                    <div th:if="${recensioni == null || recensioni.isEmpty()}" class="alert alert-light text-center" role="alert">
                         <i class="fas fa-info-circle me-2"></i>Non ci sono ancora recensioni per questo libro.
                         <span sec:authorize="isAuthenticated()">Sii il primo a scriverne una!</span>
                     </div>
 
-                    <div th:unless="${libro.recensioni == null || libro.recensioni.isEmpty()}">
-                        <div th:each="recensione : ${libro.recensioni}" class="card card-recensione mb-3">
+                    <div th:unless="${recensioni == null || recensioni.isEmpty()}">
+                        <div th:each="recensione : ${recensioni}" class="card card-recensione mb-3">
                             <div class="card-body">
-                                <h5 class="card-title" style="color: #0056b3;" th:text="${recensione.titolo}">Titolo Recensione</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">
-                                    Voto:
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title" style="color: #0056b3;" th:text="${recensione.titolo}">Titolo Recensione</h5>
+                                    <small class="text-muted" th:if="${recensione.dataCreazione != null}" th:text="${#temporals.format(recensione.dataCreazione, 'dd/MM/yyyy')}">01/01/2023</small>
+                                </div>
+                                
+                                <h6 class="card-subtitle mb-3">
                                     <span th:each="i : ${#numbers.sequence(1, 5)}">
                                         <i th:if="${i <= recensione.voto}" class="fas fa-star" style="color: #ffc107;"></i>
                                         <i th:if="${i > recensione.voto}" class="far fa-star" style="color: #ffc107;"></i>
@@ -92,18 +109,91 @@
                                     <span class="ms-2" th:text="'(' + ${recensione.voto} + '/5)'"></span>
                                 </h6>
                                 <p class="card-text" th:text="${recensione.testo}">Testo recensione.</p>
-                                <footer class="blockquote-footer mt-2">
-                                    <small>Recensito da: <strong th:text="${recensione.utente?.username ?: 'Utente Sconosciuto'}">Username</strong></small>
-                                </footer>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <footer class="blockquote-footer mb-0">
+                                        <small>Recensito da: <strong th:text="${recensione.utente?.username ?: 'Utente Sconosciuto'}">Username</strong></small>
+                                    </footer>
+                                    
+                                    <!-- Admin: Pulsante elimina -->
+                                    <div sec:authorize="hasAuthority('ADMIN')">
+                                        <a th:href="@{/recensioni/{id}/delete(id=${recensione.id})}" 
+                                           class="btn btn-sm btn-outline-danger"
+                                           onclick="return confirm('Sei sicuro di voler eliminare questa recensione?');">
+                                            <i class="fas fa-trash-alt"></i> Elimina
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Pulsante per aggiungere recensione -->
-                    <div class="text-center mt-4" sec:authorize="isAuthenticated()">
-                         <!-- Qui andrà il link/form per aggiungere una recensione, da implementare -->
-                         <!-- Esempio: <a th:href="@{/libri/{id}/recensioni/nuova(id=${libro.id})}" class="btn btn-custom-primary"><i class="fas fa-plus-circle me-2"></i>Scrivi una recensione</a> -->
-                         <p class="text-muted">(Funzionalità "Scrivi recensione" da implementare)</p>
+                    <!-- Form per aggiungere recensione -->
+                    <div class="mt-4" sec:authorize="isAuthenticated()">
+                         <!-- Mostra form solo se l'utente non ha già recensito il libro -->
+                         <div th:if="${!utenteHaRecensito}" class="card shadow-sm mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <h4 class="mb-0"><i class="fas fa-pencil-alt me-2"></i>Scrivi una recensione</h4>
+                            </div>
+                            <div class="card-body">
+                                <form th:action="@{'/libri/' + ${libro.id} + '/recensioni'}" th:object="${recensione}" method="post">
+                                    <!-- Titolo Recensione -->
+                                    <div class="mb-3">
+                                        <label for="titolo" class="form-label">Titolo della recensione</label>
+                                        <input type="text" class="form-control" id="titolo" th:field="*{titolo}" required>
+                                        <div class="text-danger" th:if="${#fields.hasErrors('titolo')}" th:errors="*{titolo}"></div>
+                                    </div>
+                                    
+                                    <!-- Voto -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Voto</label>
+                                        <div class="rating-stars mb-2">
+                                            <div class="btn-group" role="group">
+                                                <input type="radio" class="btn-check" th:field="*{voto}" name="voto" id="voto1" value="1" required>
+                                                <label class="btn btn-outline-warning" for="voto1"><i class="fas fa-star"></i> 1</label>
+                                                
+                                                <input type="radio" class="btn-check" th:field="*{voto}" name="voto" id="voto2" value="2">
+                                                <label class="btn btn-outline-warning" for="voto2"><i class="fas fa-star"></i> 2</label>
+                                                
+                                                <input type="radio" class="btn-check" th:field="*{voto}" name="voto" id="voto3" value="3">
+                                                <label class="btn btn-outline-warning" for="voto3"><i class="fas fa-star"></i> 3</label>
+                                                
+                                                <input type="radio" class="btn-check" th:field="*{voto}" name="voto" id="voto4" value="4">
+                                                <label class="btn btn-outline-warning" for="voto4"><i class="fas fa-star"></i> 4</label>
+                                                
+                                                <input type="radio" class="btn-check" th:field="*{voto}" name="voto" id="voto5" value="5">
+                                                <label class="btn btn-outline-warning" for="voto5"><i class="fas fa-star"></i> 5</label>
+                                            </div>
+                                        </div>
+                                        <div class="text-danger" th:if="${#fields.hasErrors('voto')}" th:errors="*{voto}"></div>
+                                    </div>
+                                    
+                                    <!-- Testo Recensione -->
+                                    <div class="mb-3">
+                                        <label for="testo" class="form-label">La tua recensione</label>
+                                        <textarea class="form-control" id="testo" th:field="*{testo}" rows="4"></textarea>
+                                        <div class="text-danger" th:if="${#fields.hasErrors('testo')}" th:errors="*{testo}"></div>
+                                        <div class="form-text">Max 1000 caratteri. Racconta cosa ti è piaciuto o non ti è piaciuto del libro.</div>
+                                    </div>
+                                    
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-paper-plane me-1"></i>Pubblica recensione
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                         </div>
+                         
+                         <div th:if="${utenteHaRecensito}" class="alert alert-info mt-3">
+                             <i class="fas fa-info-circle me-2"></i>Hai già scritto una recensione per questo libro.
+                         </div>
+                         
+                         <div class="text-center mt-3">
+                             <a th:href="@{/utente/recensioni}" class="text-muted">
+                                 <i class="fas fa-star me-1"></i>Visualizza tutte le tue recensioni
+                             </a>
+                         </div>
                     </div>
                 </div>
             </div>

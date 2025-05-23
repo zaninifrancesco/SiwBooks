@@ -14,6 +14,7 @@ import it.uniroma3.siw.siwbooks.model.Autore;
 import it.uniroma3.siw.siwbooks.model.Libro;
 import it.uniroma3.siw.siwbooks.service.AutoreService;
 import it.uniroma3.siw.siwbooks.service.LibroService;
+import it.uniroma3.siw.siwbooks.service.RecensioneService; // Added import
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,9 @@ public class AdminController {
 
     @Autowired
     private AutoreService autoreService;
+
+    @Autowired // Added RecensioneService
+    private RecensioneService recensioneService;
 
     @GetMapping("/dashboard")
     public String adminDashboard(Model model) {
@@ -120,6 +124,13 @@ public class AdminController {
     public String manageAutori(Model model) {
         model.addAttribute("autori", autoreService.findAll());
         return "admin/manageAutori";
+    }
+
+    // === Gestione Recensioni ===
+    @GetMapping("/manageRecensioni")
+    public String manageRecensioni(Model model) {
+        model.addAttribute("recensioni", recensioneService.findAll());
+        return "admin/manageRecensioni";
     }
 
     // La cancellazione delle recensioni è in RecensioneController ma accessibile solo ad admin
