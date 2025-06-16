@@ -76,8 +76,24 @@ public class AdminController {
 
     @GetMapping("/libri/{id}/delete")
     public String deleteLibro(@PathVariable("id") Long id, Model model) {
-        libroService.deleteById(id);
-        return "redirect:/libri";
+        // Recupera il libro prima di eliminarlo
+        Libro libro = libroService.findById(id);
+        if (libro != null) {
+            // Rimuovi il libro dagli autori associati (relazione bidirezionale)
+            if (libro.getAutori() != null) {
+                // Crea una copia della lista per evitare ConcurrentModificationException
+                List<Autore> autoriAssociati = new ArrayList<>(libro.getAutori());
+                for (Autore autore : autoriAssociati) {
+                    if (autore.getLibri() != null) {
+                        autore.getLibri().remove(libro);
+                        autoreService.save(autore); // Salva l'autore aggiornato
+                    }
+                }
+            }
+            // Ora elimina il libro
+            libroService.deleteById(id);
+        }
+        return "redirect:/admin/manageLibri";
     }
 
     // Nuovo metodo per gestire la pagina di gestione dei libri
@@ -115,7 +131,21 @@ public class AdminController {
 
     @GetMapping("/autori/{id}/delete")
     public String deleteAutore(@PathVariable("id") Long id, Model model) {
-        autoreService.deleteById(id);
+        // Recupera l'autore prima di eliminarlo
+        Autore autore = autoreService.findById(id);
+        if (autore != null) {
+            // Rimuovi l'autore da tutti i libri associati
+            if (autore.getLibri() != null) {
+                // Crea una copia della lista per evitare ConcurrentModificationException
+                List<Libro> libriAssociati = new ArrayList<>(autore.getLibri());
+                for (Libro libro : libriAssociati) {
+                    libro.getAutori().remove(autore);
+                    libroService.save(libro); // Salva il libro aggiornato
+                }
+            }
+            // Ora elimina l'autore
+            autoreService.deleteById(id);
+        }
         // Redirect alla pagina di gestione autori dopo la cancellazione
         return "redirect:/admin/manageAutori";
     }

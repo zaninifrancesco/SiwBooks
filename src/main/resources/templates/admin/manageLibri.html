@@ -56,7 +56,7 @@
                     </td>
                     <td>
                         <a th:href="@{'/admin/libri/' + ${libro.id} + '/edit'}" class="btn btn-sm btn-primary">Modifica</a>
-                        <!-- Aggiungere link per eliminazione se necessario -->
+                        <a th:href="@{'/admin/libri/' + ${libro.id} + '/delete'}" class="btn btn-sm btn-danger ms-1" onclick="return confirm('Sei sicuro di voler eliminare questo libro?');">Elimina</a>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(libri)}">
