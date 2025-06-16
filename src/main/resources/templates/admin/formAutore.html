@@ -30,9 +30,17 @@
     </nav>
 
     <div class="container mt-5">
-        <h1 class="mb-4">Aggiungi Nuovo Autore</h1>
+        <h1 class="mb-4" th:text="${autore.id == null} ? 'Aggiungi Nuovo Autore' : 'Modifica Autore'">Gestione Autore</h1>
 
-        <form th:action="@{/admin/autori}" th:object="${autore}" method="post">
+        <!-- Alert per errori -->
+        <div th:if="${errore}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i><span th:text="${errore}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <form th:action="@{/admin/autori}" th:object="${autore}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{id}" />
+            
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome:</label>
                 <input type="text" class="form-control" id="nome" th:field="*{nome}" required>
@@ -63,14 +71,21 @@
                 <div class="alert alert-warning" th:if="${#fields.hasErrors('nazionalita')}" th:errors="*{nazionalita}"></div>
             </div>
             
+            <!-- Sezione per upload foto -->
             <div class="mb-3">
-                <label for="foto" class="form-label">URL Foto (opzionale):</label>
-                <input type="text" class="form-control" id="foto" th:field="*{foto}">
-                <div class="alert alert-warning" th:if="${#fields.hasErrors('foto')}" th:errors="*{foto}"></div>
+                <label for="fotoFile" class="form-label">Foto Autore:</label>
+                <input type="file" class="form-control" id="fotoFile" name="fotoFile" accept="image/*">
+                <small class="form-text text-muted">Carica una foto dell'autore (formati supportati: JPG, PNG, GIF).</small>
+                
+                <!-- Mostra foto esistente se in modifica -->
+                <div th:if="${autore.foto != null}" class="mt-3">
+                    <label class="form-label">Foto attuale:</label><br>
+                    <img th:src="${autore.foto}" class="img-thumbnail" style="height: 200px; object-fit: cover;" alt="Foto autore">
+                </div>
             </div>
 
             <button type="submit" class="btn btn-primary">Salva Autore</button>
-            <a th:href="@{/admin/dashboard}" class="btn btn-secondary">Annulla</a>
+            <a th:href="@{/admin/manageAutori}" class="btn btn-secondary">Annulla</a>
         </form>
     </div>
 

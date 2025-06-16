@@ -48,7 +48,9 @@
             <div class="col" th:each="libro : ${libri}">
                 <a th:href="@{'/libri/' + ${libro.id}}" class="text-decoration-none text-dark">
                     <div class="card h-100 libro-card">
-                        <img th:src="'#file:placeholder.png'" class="card-img-top" alt="Copertina Libro">
+                        <img th:src="${libro.immagini != null && !libro.immagini.isEmpty() ? libro.immagini[0] : '/images/placeholder.png'}" 
+                             class="card-img-top" 
+                             alt="Copertina Libro">
                         <div class="card-body">
                             <h5 class="card-title" th:text="${libro.titolo}">Titolo Libro</h5>
                             <p class="card-text">

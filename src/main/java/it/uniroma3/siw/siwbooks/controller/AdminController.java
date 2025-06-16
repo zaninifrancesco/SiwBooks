@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import it.uniroma3.siw.siwbooks.model.Autore;
 import it.uniroma3.siw.siwbooks.model.Libro;
 import it.uniroma3.siw.siwbooks.service.AutoreService;
 import it.uniroma3.siw.siwbooks.service.LibroService;
-import it.uniroma3.siw.siwbooks.service.RecensioneService; // Added import
+import it.uniroma3.siw.siwbooks.service.RecensioneService;
+import it.uniroma3.siw.siwbooks.service.ImageService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,9 @@ public class AdminController {
 
     @Autowired // Added RecensioneService
     private RecensioneService recensioneService;
+    
+    @Autowired
+    private ImageService imageService;
 
     @GetMapping("/dashboard")
     public String adminDashboard(Model model) {
@@ -47,20 +52,64 @@ public class AdminController {
     }
 
     @PostMapping("/libri")
-    public String saveLibro(@ModelAttribute Libro libro, @RequestParam(name = "autoriIds", required = false) List<Long> autoriIds, Model model) { // Modificato da Long autoreId a List<Long> autoriIds
-        if (autoriIds != null && !autoriIds.isEmpty()) {
-            List<Autore> autoriSelezionati = new ArrayList<>();
-            for (Long autoreId : autoriIds) {
-                Autore autore = autoreService.findById(autoreId);
-                if (autore != null) {
-                    autoriSelezionati.add(autore);
+    public String saveLibro(@ModelAttribute Libro libro, 
+                           @RequestParam(name = "autoriIds", required = false) List<Long> autoriIds,
+                           @RequestParam(name = "immaginiFile", required = false) MultipartFile[] immaginiFile,
+                           Model model) {
+        
+        try {
+            // Gestione autori
+            if (autoriIds != null && !autoriIds.isEmpty()) {
+                List<Autore> autoriSelezionati = new ArrayList<>();
+                for (Long autoreId : autoriIds) {
+                    Autore autore = autoreService.findById(autoreId);
+                    if (autore != null) {
+                        autoriSelezionati.add(autore);
+                    }
+                }
+                libro.setAutori(autoriSelezionati);
+            }
+            
+            // Gestione upload immagini
+            if (immaginiFile != null && immaginiFile.length > 0) {
+                // Verifica se ci sono nuove immagini da caricare
+                boolean hasNewImages = false;
+                for (MultipartFile file : immaginiFile) {
+                    if (!file.isEmpty()) {
+                        hasNewImages = true;
+                        break;
+                    }
+                }
+                
+                if (hasNewImages) {
+                    // Se stiamo modificando un libro esistente e ci sono nuove immagini,
+                    // elimina le vecchie immagini prima di aggiungere le nuove
+                    if (libro.getId() != null) {
+                        Libro libroEsistente = libroService.findById(libro.getId());
+                        if (libroEsistente != null && libroEsistente.getImmagini() != null && !libroEsistente.getImmagini().isEmpty()) {
+                            imageService.deleteImages(libroEsistente.getImmagini());
+                            System.out.println("Eliminate vecchie immagini per il libro: " + libro.getTitolo());
+                        }
+                    }
+                    
+                    // Carica le nuove immagini
+                    List<String> imagePaths = imageService.saveImages(immaginiFile);
+                    if (!imagePaths.isEmpty()) {
+                        libro.setImmagini(imagePaths);
+                        System.out.println("Caricate " + imagePaths.size() + " nuove immagini per il libro: " + libro.getTitolo());
+                    }
                 }
             }
-            libro.setAutori(autoriSelezionati); // Modificato da setAutore a setAutori
+            
+            libroService.save(libro);
+            return "redirect:/libri/" + libro.getId();
+            
+        } catch (Exception e) {
+            model.addAttribute("errore", "Errore durante il salvataggio: " + e.getMessage());
+            model.addAttribute("libro", libro);
+            model.addAttribute("tuttiAutori", autoreService.findAll());
+            return "admin/formLibro";
         }
-        // Logica per salvare il libro, gestione immagini
-        libroService.save(libro);
-        return "redirect:/libri/" + libro.getId();
     }
 
     @GetMapping("/libri/{id}/edit")
@@ -79,6 +128,12 @@ public class AdminController {
         // Recupera il libro prima di eliminarlo
         Libro libro = libroService.findById(id);
         if (libro != null) {
+            // Elimina le immagini associate
+            if (libro.getImmagini() != null && !libro.getImmagini().isEmpty()) {
+                imageService.deleteImages(libro.getImmagini());
+                System.out.println("Eliminate " + libro.getImmagini().size() + " immagini per il libro: " + libro.getTitolo());
+            }
+            
             // Rimuovi il libro dagli autori associati (relazione bidirezionale)
             if (libro.getAutori() != null) {
                 // Crea una copia della lista per evitare ConcurrentModificationException
@@ -92,6 +147,7 @@ public class AdminController {
             }
             // Ora elimina il libro
             libroService.deleteById(id);
+            System.out.println("Libro eliminato: " + libro.getTitolo());
         }
         return "redirect:/admin/manageLibri";
     }
@@ -111,11 +167,37 @@ public class AdminController {
     }
 
     @PostMapping("/autori")
-    public String saveAutore(@ModelAttribute Autore autore, Model model) {
-        // Logica per salvare l'autore, gestione foto
-        autoreService.save(autore);
-        // Redirect alla pagina di gestione autori dopo il salvataggio
-        return "redirect:/admin/manageAutori"; 
+    public String saveAutore(@ModelAttribute Autore autore,
+                            @RequestParam(name = "fotoFile", required = false) MultipartFile fotoFile,
+                            Model model) {
+        
+        try {
+            // Gestione upload foto autore
+            if (fotoFile != null && !fotoFile.isEmpty()) {
+                // Se stiamo modificando un autore esistente e c'è una nuova foto,
+                // elimina la vecchia foto prima di aggiungere la nuova
+                if (autore.getId() != null) {
+                    Autore autoreEsistente = autoreService.findById(autore.getId());
+                    if (autoreEsistente != null && autoreEsistente.getFoto() != null) {
+                        imageService.deleteImage(autoreEsistente.getFoto());
+                        System.out.println("Eliminata vecchia foto per l'autore: " + autore.getNome() + " " + autore.getCognome());
+                    }
+                }
+                
+                // Carica la nuova foto
+                String fotoPath = imageService.saveImage(fotoFile);
+                autore.setFoto(fotoPath);
+                System.out.println("Caricata nuova foto per l'autore: " + autore.getNome() + " " + autore.getCognome());
+            }
+            
+            autoreService.save(autore);
+            return "redirect:/admin/manageAutori";
+            
+        } catch (Exception e) {
+            model.addAttribute("errore", "Errore durante il salvataggio: " + e.getMessage());
+            model.addAttribute("autore", autore);
+            return "admin/formAutore";
+        }
     }
 
     @GetMapping("/autori/{id}/edit")
@@ -134,6 +216,12 @@ public class AdminController {
         // Recupera l'autore prima di eliminarlo
         Autore autore = autoreService.findById(id);
         if (autore != null) {
+            // Elimina la foto dell'autore
+            if (autore.getFoto() != null) {
+                imageService.deleteImage(autore.getFoto());
+                System.out.println("Eliminata foto per l'autore: " + autore.getNome() + " " + autore.getCognome());
+            }
+            
             // Rimuovi l'autore da tutti i libri associati
             if (autore.getLibri() != null) {
                 // Crea una copia della lista per evitare ConcurrentModificationException
@@ -145,6 +233,7 @@ public class AdminController {
             }
             // Ora elimina l'autore
             autoreService.deleteById(id);
+            System.out.println("Autore eliminato: " + autore.getNome() + " " + autore.getCognome());
         }
         // Redirect alla pagina di gestione autori dopo la cancellazione
         return "redirect:/admin/manageAutori";

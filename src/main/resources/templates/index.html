@@ -74,8 +74,10 @@
                 <div class="col" th:each="libro : ${libri}">
                     <a th:href="@{'/libri/' + ${libro.id}}" class="text-decoration-none text-dark">
                         <div class="card h-100 libro-card">
-                            <!-- Immagine placeholder se non ci sono immagini per il libro -->
-                            <img th:src="'/images/placeholder.png'" class="card-img-top" alt="Copertina Libro">
+                            <!-- Mostra la prima immagine del libro se disponibile, altrimenti placeholder -->
+                            <img th:src="${libro.immagini != null && !libro.immagini.isEmpty() ? libro.immagini[0] : '/images/placeholder.png'}" 
+                                 class="card-img-top" 
+                                 alt="Copertina Libro">
                             <div class="card-body">
                                 <h5 class="card-title" th:text="${libro.titolo}">Titolo Libro</h5>
                                 <p class="card-text">
@@ -114,7 +116,9 @@
                 <div class="col" th:each="autore : ${autori}">
                     <div class="card h-100 autore-card text-center">
                         <a th:href="@{'/autori/' + ${autore.id}}" class="text-decoration-none stretched-link">
-                            <img th:src="'/images/placeholder.png'" class="card-img-top rounded-circle mx-auto mt-3" alt="Foto Autore">
+                            <img th:src="${autore.foto != null ? autore.foto : '/images/placeholder.png'}" 
+                                 class="card-img-top rounded-circle mx-auto mt-3" 
+                                 alt="Foto Autore">
                         </a>
                         <div class="card-body">
                             <h5 class="card-title" th:text="${autore.nome} + ' ' + ${autore.cognome}">Nome Autore</h5>

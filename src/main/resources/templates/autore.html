@@ -43,7 +43,7 @@
         <div th:if="${autore}">
             <div class="row align-items-center">
                 <div class="col-md-4 text-center">
-                    <img th:src="'/images/placeholder.png'"
+                    <img th:src="${autore.foto != null ? autore.foto : '/images/placeholder.png'}"
                          alt="Foto Autore" class="author-photo-detail img-fluid">
                 </div>
                 <div class="col-md-8">

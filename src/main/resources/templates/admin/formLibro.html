@@ -34,6 +34,12 @@
              <h1 th:text="${libro.id == null} ? 'Aggiungi Nuovo Libro' : 'Modifica Libro'"><i class="fas fa-plus-circle me-2" th:if="${libro.id == null}"></i><i class="fas fa-edit me-2" th:if="${libro.id != null}"></i>Gestione Libro</h1>
         </header>
 
+        <!-- Alert per errori -->
+        <div th:if="${errore}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i><span th:text="${errore}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
         <form th:action="@{/admin/libri}" th:object="${libro}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
             <!-- Campo nascosto per ID (utile per la modifica) -->
             <input type="hidden" th:field="*{id}" />
@@ -63,11 +69,21 @@
                 <div class="invalid-feedback">Seleziona almeno un autore.</div>
             </div>
             
-            <!-- Sezione per upload immagini (da implementare successivamente) -->
+            <!-- Sezione per upload immagini -->
             <div class="mb-3">
-                <label for="immaginiFile" class="form-label">Immagini del Libro (Opzionale):</label>
+                <label for="immaginiFile" class="form-label">Immagini del Libro:</label>
                 <input type="file" class="form-control" id="immaginiFile" name="immaginiFile" multiple accept="image/*">
                 <small class="form-text text-muted">Puoi caricare una o più immagini (formati supportati: JPG, PNG, GIF).</small>
+                
+                <!-- Mostra immagini esistenti se in modifica -->
+                <div th:if="${libro.immagini != null && !libro.immagini.isEmpty()}" class="mt-3">
+                    <label class="form-label">Immagini attuali:</label>
+                    <div class="row">
+                        <div class="col-md-3 mb-2" th:each="immagine : ${libro.immagini}">
+                            <img th:src="${immagine}" class="img-thumbnail" style="height: 150px; object-fit: cover;" alt="Immagine libro">
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <hr class="my-4">

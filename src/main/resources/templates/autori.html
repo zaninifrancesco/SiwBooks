@@ -49,7 +49,10 @@
             <div class="col" th:each="autore : ${autori}">
                 <div class="card h-100 autore-card text-center">
                     <a th:href="@{'/autori/' + ${autore.id}}" class="text-decoration-none stretched-link">
-                        <img th:src="'#file:placeholder.png'" class="card-img-top rounded-circle mx-auto mt-3" alt="Foto Autore" style="max-width: 150px;">
+                        <img th:src="${autore.foto != null ? autore.foto : '/images/placeholder.png'}" 
+                             class="card-img-top rounded-circle mx-auto mt-3" 
+                             alt="Foto Autore" 
+                             style="max-width: 150px;">
                     </a>
                     <div class="card-body">
                         <h5 class="card-title" th:text="${autore.nome} + ' ' + ${autore.cognome}">Nome Autore</h5>
