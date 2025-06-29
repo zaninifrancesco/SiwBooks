@@ -2,13 +2,13 @@ package it.uniroma3.siw.siwbooks.repository;
 
 import java.util.List;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import it.uniroma3.siw.siwbooks.model.Libro;
 import it.uniroma3.siw.siwbooks.model.Recensione;
 import it.uniroma3.siw.siwbooks.model.Utente;
 
-public interface RecensioneRepository extends CrudRepository<Recensione, Long> {
+public interface RecensioneRepository extends JpaRepository<Recensione, Long> {
     /**
      * Trova una recensione per utente e libro specifici.
      * @param utente l'utente che ha scritto la recensione
