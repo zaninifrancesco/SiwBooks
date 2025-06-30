@@ -78,7 +78,6 @@ public class AuthenticationController {
         }
         utente.setRuolo(Ruolo.USER); // Assegna ruolo USER di default
         utenteService.save(utente); // Il service si occuperà della codifica della password
-        // Aggiungi un messaggio di successo opzionale per la pagina di login
         return "redirect:/login?registrationSuccess";
     }
 }
